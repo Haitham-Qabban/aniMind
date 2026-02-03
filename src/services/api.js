@@ -71,3 +71,28 @@ export const getMediaDetails = async (id, type = 'anime') => {
         return null;
     }
 };
+
+/**
+ * Get additional recommendations based on genres
+ * @param {Array} genres - Array of genre objects with mal_id
+ * @param {string} type - 'anime', 'manga', or 'manhwa'
+ * @param {Array} excludeIds - IDs to exclude from results
+ * @returns {Promise<Array>} - List of similar media
+ */
+export const getSimilarByGenre = async (genres, type = 'anime', excludeIds = []) => {
+    try {
+        const endpointType = type === 'manhwa' ? 'manga' : type;
+        const genreIds = genres.slice(0, 2).map(g => g.mal_id).join(',');
+        
+        const response = await fetch(
+            `${BASE_URL}/${endpointType}?genres=${genreIds}&order_by=score&sort=desc&limit=20&sfw=true`
+        );
+        const results = await handleResponse(response);
+        
+        // Filter out already shown recommendations
+        return results.filter(item => !excludeIds.includes(item.mal_id));
+    } catch (error) {
+        console.error('Error fetching similar media:', error);
+        return [];
+    }
+};

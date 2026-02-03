@@ -64,3 +64,27 @@ export const processRecommendations = (recommendations, sourceMedia) => {
         };
     });
 };
+
+/**
+ * Process additional recommendations from genre-based search
+ * @param {Array} items - Raw items from genre search
+ * @param {Object} sourceMedia - The source media object
+ * @returns {Array} - Processed list
+ */
+export const processAdditionalRecommendations = (items, sourceMedia) => {
+    if (!items || !sourceMedia) return [];
+
+    return items
+        .filter(item => item.images && item.images.jpg.image_url)
+        .map(item => {
+            // Lower match scores for additional recommendations (70-84%)
+            const matchScore = Math.floor(Math.random() * (84 - 70) + 70);
+
+            return {
+                ...item,
+                matchScore,
+                reason: generateExplanation(sourceMedia, item),
+                genres: item.genres || []
+            };
+        });
+};

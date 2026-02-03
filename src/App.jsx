@@ -28,6 +28,7 @@ function App() {
 
       // 2. Get recommendations for the top result
       const topResult = searchResults[0];
+      
       const rawRecommendations = await getRecommendations(topResult.mal_id, type);
 
       // 3. Process with "AI" engine
